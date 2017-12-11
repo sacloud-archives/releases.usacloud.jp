@@ -1,0 +1,4 @@
+rancher:
+  console: default
+  docker:
+    engine: docker-17.06.1-ce

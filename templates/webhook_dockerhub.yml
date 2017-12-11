@@ -1,0 +1,12 @@
+webhook-dockerhub:
+  image: "sacloud/releases-webhook-dockerhub:0.0.3"
+  command: ["-hooks", "/webhook/dockerhub/conf/hooks.json", "-verbose"]
+  ports:
+    - "9000:9000"
+  volumes:
+    - /mnt/nfs/${fqdn}:/work
+    - /var/run/docker.sock:/var/run/docker.sock
+  environment:
+    - BASEDIR=/mnt/nfs/${fqdn}
+  restart: always
+  privileged: true

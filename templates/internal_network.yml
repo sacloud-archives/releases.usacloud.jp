@@ -1,0 +1,8 @@
+#cloud-config
+rancher:
+  network:
+    interfaces:
+      eth1:
+        address: ${ip}/${mask}
+        dhcp: false
+
