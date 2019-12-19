@@ -1,0 +1,71 @@
+apiVersion: v1
+kind: Service
+metadata:
+  name: releases-docker-machine
+  namespace: default
+spec:
+  selector:
+    app: deployment-default-releases-docker-machine
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 80
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: releases-terraform
+  namespace: default
+spec:
+  selector:
+    app: deployment-default-releases-terraform
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 80
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: releases-usacloud
+  namespace: default
+spec:
+  selector:
+    app: deployment-default-releases-usacloud
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 80
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: usacloud-website
+  namespace: default
+spec:
+  selector:
+    app: deployment-default-usacloud-website
+  ports:
+  - port: 8080
+    protocol: TCP
+    targetPort: 80
+  type: ClusterIP
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: slack-invite
+  namespace: default
+spec:
+  selector:
+    app: deployment-default-slack-invite
+  ports:
+    - port: 3000
+      protocol: TCP
+      targetPort: 3000
+  sessionAffinity: None
+  type: ClusterIP
+---
