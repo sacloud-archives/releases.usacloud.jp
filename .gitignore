@@ -1,2 +1,5 @@
-terraform.tfstate
+terraform.tfvars
+terraform.tfstate*
 .terraform
+keys/*
+manifests

@@ -1,51 +1,62 @@
-resource "sakuracloud_packet_filter" "front_filter" {
-  name        = "${local.fqdn}-front-packet-filter"
-  description = "PacketFilter for ${local.fqdn} web-front"
+resource sakuracloud_packet_filter "filter" {
+  name = local.fqdn
+}
 
-  expressions = {
-    protocol    = "tcp"
-    dest_port   = "22"
-    description = "allow-external:SSH"
+resource sakuracloud_packet_filter_rules "rules" {
+  packet_filter_id = sakuracloud_packet_filter.filter.id
+
+  expression {
+    protocol         = "tcp"
+    destination_port = "22"
+    description      = "allow-external:SSH"
   }
 
-  expressions = {
-    protocol    = "tcp"
-    dest_port   = "80"
-    description = "allow-external:HTTP(for Let's Encrypt)"
+  dynamic "expression" {
+    for_each = sakuracloud_proxylb.releases.proxy_networks
+    content {
+      protocol         = "tcp"
+      source_network   = expression.value
+      destination_port = "80"
+      description      = "allow-external:HTTP"
+    }
   }
 
-  expressions = {
-    protocol    = "tcp"
-    dest_port   = "443"
-    description = "allow-external:HTTPS"
+  dynamic "expression" {
+    for_each = sakuracloud_proxylb.slack.proxy_networks
+    content {
+      protocol         = "tcp"
+      source_network   = expression.value
+      destination_port = "80"
+      description      = "allow-external:HTTP"
+    }
   }
 
-  expressions = {
+  expression {
     protocol = "icmp"
   }
 
-  expressions = {
+  expression {
     protocol = "fragment"
   }
 
-  expressions = {
+  expression {
     protocol    = "udp"
     source_port = "123"
   }
 
-  expressions = {
-    protocol    = "tcp"
-    dest_port   = "32768-61000"
-    description = "allow-from-server"
+  expression {
+    protocol         = "tcp"
+    destination_port = "32768-60999"
+    description      = "allow-from-server"
   }
 
-  expressions = {
-    protocol    = "udp"
-    dest_port   = "32768-61000"
-    description = "allow-from-server"
+  expression {
+    protocol         = "udp"
+    destination_port = "32768-60999"
+    description      = "allow-from-server"
   }
 
-  expressions = {
+  expression {
     protocol    = "ip"
     allow       = false
     description = "Deny ALL"
