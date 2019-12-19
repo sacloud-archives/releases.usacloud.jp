@@ -1,0 +1,33 @@
+apiVersion: extensions/v1beta1
+kind: Ingress
+metadata:
+  name: front
+  namespace: default
+spec:
+  rules:
+  - host: releases.usacloud.jp
+    http:
+      paths:
+      - backend:
+          serviceName: usacloud-website
+          servicePort: 80
+        path: /
+      - backend:
+          serviceName: releases-usacloud
+          servicePort: 80
+        path: /usacloud
+      - backend:
+          serviceName: releases-terraform
+          servicePort: 80
+        path: /terraform
+      - backend:
+          serviceName: releases-docker-machine
+          servicePort: 80
+        path: /docker-machine
+  - host: slack.usacloud.jp
+    http:
+      paths:
+        - backend:
+            serviceName: slack-invite
+            servicePort: 3000
+          path: /

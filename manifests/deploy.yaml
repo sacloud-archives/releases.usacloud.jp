@@ -1,0 +1,140 @@
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: releases-docker-machine
+  namespace: default
+  annotations:
+    keel.sh/policy: all
+    keel.sh/trigger: poll
+spec:
+  replicas: 2
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: deployment-default-releases-docker-machine
+  template:
+    metadata:
+      labels:
+        app: deployment-default-releases-docker-machine
+    spec:
+      containers:
+      - image: sacloud/releases-docker-machine:1.4.1
+        imagePullPolicy: Always
+        name: releases-docker-machine
+        ports:
+        - containerPort: 80
+          protocol: TCP
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+      schedulerName: default-scheduler
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: releases-terraform
+  namespace: default
+  annotations:
+    keel.sh/policy: all
+    keel.sh/trigger: poll
+spec:
+  progressDeadlineSeconds: 600
+  replicas: 2
+  revisionHistoryLimit: 3
+  selector:
+    matchLabels:
+      app: deployment-default-releases-terraform
+  template:
+    metadata:
+      labels:
+        app: deployment-default-releases-terraform
+    spec:
+      containers:
+      - image: sacloud/releases-terraform:1.20.2
+        imagePullPolicy: Always
+        name: releases-terraform
+        ports:
+        - containerPort: 80
+          protocol: TCP
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: releases-usacloud
+  namespace: default
+  annotations:
+    keel.sh/policy: all
+    keel.sh/trigger: poll
+spec:
+  selector:
+    matchLabels:
+      app: deployment-default-releases-usacloud
+  template:
+    metadata:
+      labels:
+        app: deployment-default-releases-usacloud
+    spec:
+      containers:
+      - image: sacloud/releases-usacloud:0.31.1
+        imagePullPolicy: Always
+        name: releases-usacloud
+        ports:
+        - containerPort: 80
+          protocol: TCP
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: usacloud-website
+  namespace: default
+  annotations:
+    keel.sh/policy: all
+    keel.sh/trigger: poll
+spec:
+  selector:
+    matchLabels:
+      app: deployment-default-usacloud-website
+  template:
+    metadata:
+      labels:
+        app: deployment-default-usacloud-website
+    spec:
+      containers:
+      - image: sacloud/usacloud-website:0.0.3
+        imagePullPolicy: Always
+        name: usacloud-website
+        ports:
+        - containerPort: 80
+          protocol: TCP
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
+---
+apiVersion: extensions/v1beta1
+kind: Deployment
+metadata:
+  name: slack-invite
+  namespace: default
+spec:
+  selector:
+    matchLabels:
+      app: deployment-default-slack-invite
+  template:
+    metadata:
+      labels:
+        app: deployment-default-slack-invite
+    spec:
+      containers:
+        - envFrom:
+            - secretRef:
+                name: slack-invite-secrets
+          image: sacloud/slackin:latest
+          imagePullPolicy: Always
+          name: slack-invite
+          ports:
+            - containerPort: 3000
+              protocol: TCP
+      dnsPolicy: ClusterFirst
+      restartPolicy: Always
